@@ -49,6 +49,10 @@ MOCK_PULSES = [
     {"id": "2", "user_id": "u2", "content": "Best coffee at the Student Union today! ☕️", "category": "Social", "building_tag": "Student Union", "created_at": "2026-03-21T01:00:00Z"},
 ]
 
+class TranslationRequest(BaseModel):
+    content: str
+    target_lang: str = "ko"
+
 # Endpoints
 @app.get("/")
 async def root():
@@ -63,22 +67,22 @@ async def list_pulses():
     return MOCK_PULSES
 
 @app.post("/api/pulses/translate")
-async def translate_pulse(content: str, target_lang: str = "ko"):
+async def translate_pulse(request: TranslationRequest):
     try:
         completion = client.chat.completions.create(
             extra_headers={
                 "HTTP-Referer": "https://github.com/UsmanovMahmudkhan/SejongPulse",
                 "X-Title": "Sejong Pulse",
             },
-            model="google/gemini-flash-1.5",
+            model="google/gemini-2.0-flash-001",
             messages=[
-                {"role": "system", "content": f"You are a translation agent for Sejong University. Translate the following student post to {target_lang}. Keep emojis and informal student tone. Provide ONLY the translation."},
-                {"role": "user", "content": content},
+                {"role": "system", "content": f"You are a translation agent for Sejong University. Translate the following student post to {request.target_lang}. Keep emojis and informal student tone. Provide ONLY the translation."},
+                {"role": "user", "content": request.content},
             ],
         )
         return {"translated_content": completion.choices[0].message.content}
     except Exception as e:
-        return {"translated_content": f"[Error: {str(e)}] {content}"}
+        return {"translated_content": f"[AI Error: {str(e)}] {request.content}"}
 
 @app.get("/api/recommendations/{user_id}", response_model=List[Profile])
 async def get_recommendations(user_id: str):
@@ -112,7 +116,7 @@ async def advisor_query(query: str):
                 "HTTP-Referer": "https://github.com/UsmanovMahmudkhan/SejongPulse",
                 "X-Title": "Sejong Pulse",
             },
-            model="google/gemini-flash-1.5",
+            model="google/gemini-2.0-flash-001",
             messages=[
                 {"role": "system", "content": "You are Sejong University's AI Academic Advisor. Answer queries based on general academic knowledge. If you don't know the exact 2026 rule, provide a helpful general response for a Sejong University student. Keep it professional but accessible."},
                 {"role": "user", "content": query},
