@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sejong Pulse - Authentication</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary": "#ffffff",
+              "on-error-container": "#93000a",
+              "on-tertiary-fixed-variant": "#00497b",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-fixed": "#410005",
+              "primary-container": "#960018",
+              "outline-variant": "#e2bebb",
+              "tertiary": "#003459",
+              "surface": "#f9f9fb",
+              "surface-container-high": "#e8e8ea",
+              "on-secondary-fixed": "#241a00",
+              "inverse-surface": "#2f3132",
+              "inverse-on-surface": "#f0f0f2",
+              "on-tertiary-container": "#88bbf4",
+              "surface-tint": "#b6212b",
+              "tertiary-fixed-dim": "#9ccaff",
+              "inverse-primary": "#ffb3af",
+              "secondary-container": "#fed65b",
+              "surface-container-low": "#f3f3f5",
+              "on-secondary-container": "#745c00",
+              "tertiary-container": "#004b7d",
+              "surface-container": "#edeef0",
+              "surface-bright": "#f9f9fb",
+              "surface-container-highest": "#e2e2e4",
+              "primary-fixed-dim": "#ffb3af",
+              "error-container": "#ffdad6",
+              "surface-variant": "#e2e2e4",
+              "on-tertiary-fixed": "#001d35",
+              "on-surface-variant": "#5a403f",
+              "on-error": "#ffffff",
+              "on-primary": "#ffffff",
+              "surface-dim": "#d9dadc",
+              "on-primary-fixed-variant": "#930017",
+              "on-secondary-fixed-variant": "#574500",
+              "outline": "#8e706e",
+              "on-primary-container": "#ff9d98",
+              "error": "#ba1a1a",
+              "background": "#f9f9fb",
+              "on-tertiary": "#ffffff",
+              "primary-fixed": "#ffdad7",
+              "primary": "#6b000e",
+              "secondary-fixed-dim": "#e9c349",
+              "tertiary-fixed": "#d0e4ff",
+              "on-background": "#1a1c1d",
+              "secondary": "#735c00",
+              "on-surface": "#1a1c1d",
+              "secondary-fixed": "#ffe088"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-glow {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+        }
+        .crimson-aura {
+            box-shadow: 0 12px 24px rgba(150, 0, 24, 0.15);
+        }
+        .liquid-gradient {
+            background: linear-gradient(135deg, #6b000e 0%, #960018 100%);
+        }
+        .asymmetric-bubble {
+            border-top-left-radius: 1.5rem;
+            border-bottom-right-radius: 0.25rem;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-background overflow-hidden selection:bg-primary-container selection:text-white">
+<!-- Ambient Background Aether -->
+<div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+<div class="absolute -top-24 -left-24 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-secondary-container/10 rounded-full blur-[160px]"></div>
+<div class="absolute -bottom-48 -right-48 w-[700px] h-[700px] bg-tertiary-fixed/10 rounded-full blur-[140px]"></div>
+</div>
+<!-- Auth Canvas -->
+<main class="relative z-10 min-h-screen flex flex-col items-center justify-center px-6">
+<!-- Glass Pod Container -->
+<div class="w-full max-w-md flex flex-col items-center">
+<!-- Branding Area -->
+<div class="mb-16 text-center">
+<div class="inline-flex items-center justify-center w-24 h-24 mb-8 glass-glow rounded-[2.5rem] crimson-aura relative overflow-hidden group">
+<!-- Internal Crimson Glow -->
+<div class="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="material-symbols-outlined text-5xl text-primary-container" style="font-variation-settings: 'FILL' 1;">sensors</span>
+</div>
+<h1 class="font-headline text-5xl font-extrabold tracking-tighter text-on-background mb-4">
+                    Sejong <span class="text-primary-container">Pulse</span>
+</h1>
+<p class="text-on-surface-variant text-lg font-medium max-w-[280px] mx-auto leading-relaxed">
+                    The ethereal heart of Sejong University's digital ecosystem.
+                </p>
+</div>
+<!-- Interaction Card -->
+<div class="w-full glass-glow p-8 rounded-[2rem] shadow-[0_20_40px_rgba(26,28,29,0.04)] border border-white/20">
+<div class="space-y-6">
+<div class="text-center mb-4">
+<span class="font-label text-xs uppercase tracking-[0.15em] text-outline font-bold">University Gateway</span>
+</div>
+<!-- CTA Button -->
+<button class="w-full liquid-gradient text-white flex items-center justify-center gap-3 py-5 px-6 rounded-full font-headline font-bold text-lg crimson-aura active:scale-95 transition-all duration-300">
+<span>Sign In with @sju.ac.kr</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<!-- Secondary Info -->
+<div class="flex flex-col items-center space-y-4 pt-4">
+<p class="text-sm text-on-surface-variant font-medium text-center">
+                            No password required. A secure magic link will be sent to your academic inbox.
+                        </p>
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="text-[10px] font-label uppercase tracking-widest text-secondary font-bold">Secured by Academic ID</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Quote/Status -->
+<div class="mt-12 text-center opacity-40">
+<p class="text-xs font-label uppercase tracking-[0.2em] text-on-surface">Creative Academy since 1940</p>
+</div>
+</div>
+</main>
+<!-- Crimson Aether Ripple Layer (Top-level effect placeholder) -->
+<div class="fixed inset-0 pointer-events-none z-50 mix-blend-soft-light opacity-0 transition-opacity duration-1000 bg-gradient-to-tr from-primary/20 via-transparent to-primary/10"></div>
+<!-- Visual Assets Attribution (Hidden but present for system requirement) -->
+<div class="hidden">
+<img data-alt="Soft crimson and gold abstract light leak pattern" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp6VaO2HaDHDOTTIKpyHnIJaNRniB-K9nYamddgQyK0zBRVsA2EA2akPQaPUXw_hTZNZBYm9HEz4fSvP3Sp77FPpjX2NojNpjfCilcQ5E5Fp2fAH_kHs1yyvtwTnoXOq72ZYFmPHmP_JaMwAj9X_ZItfXb63sAAZbhcbMHRIYkWAvvrVfZ0ROwhEnHVKVh061dEqB-Nlx31gLji4Zsx0KjpfHRoicSyEr5e5H8ukH2b2imB9EXFgpt0_aY5DMqACGANPR-6iz1AtK7"/>
+<img data-alt="Frosted glass texture with high diffusion" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1Om4Ok3hnMDjbo9Jm6xCWnSIjhLhCe08U71mG3Ehr0fNMcMa-b9YKjVibrQn0S7xC44jDwS78UqWJHs7zQo4UMwsqYAzLYrmVXHbevW9K-6bm7IfIapzzms5vB1FO7NQxw6TFfAUzTVtB9Nl2waqiNc7gujTyTrohL0Nzy7cY7ahcxBIOMDMdHNgKB3PG-pJINIl9tzwnUgEvGhIp8nYJe1yhw56fBcNOYpi8rhj0JkorNiT3aM6lfvdNt03S23JJ_kpnNr4E32xk"/>
+</div>
+</body></html>

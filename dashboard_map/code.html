@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sejong Pulse - Smart Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary": "#ffffff",
+              "on-error-container": "#93000a",
+              "on-tertiary-fixed-variant": "#00497b",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-fixed": "#410005",
+              "primary-container": "#960018",
+              "outline-variant": "#e2bebb",
+              "tertiary": "#003459",
+              "surface": "#f9f9fb",
+              "surface-container-high": "#e8e8ea",
+              "on-secondary-fixed": "#241a00",
+              "inverse-surface": "#2f3132",
+              "inverse-on-surface": "#f0f0f2",
+              "on-tertiary-container": "#88bbf4",
+              "surface-tint": "#b6212b",
+              "tertiary-fixed-dim": "#9ccaff",
+              "inverse-primary": "#ffb3af",
+              "secondary-container": "#fed65b",
+              "surface-container-low": "#f3f3f5",
+              "on-secondary-container": "#745c00",
+              "tertiary-container": "#004b7d",
+              "surface-container": "#edeef0",
+              "surface-bright": "#f9f9fb",
+              "surface-container-highest": "#e2e2e4",
+              "primary-fixed-dim": "#ffb3af",
+              "error-container": "#ffdad6",
+              "surface-variant": "#e2e2e4",
+              "on-tertiary-fixed": "#001d35",
+              "on-surface-variant": "#5a403f",
+              "on-error": "#ffffff",
+              "on-primary": "#ffffff",
+              "surface-dim": "#d9dadc",
+              "on-primary-fixed-variant": "#930017",
+              "on-secondary-fixed-variant": "#574500",
+              "outline": "#8e706e",
+              "on-primary-container": "#ff9d98",
+              "error": "#ba1a1a",
+              "background": "#f9f9fb",
+              "on-tertiary": "#ffffff",
+              "primary-fixed": "#ffdad7",
+              "primary": "#6b000e",
+              "secondary-fixed-dim": "#e9c349",
+              "tertiary-fixed": "#d0e4ff",
+              "on-background": "#1a1c1d",
+              "secondary": "#735c00",
+              "on-surface": "#1a1c1d",
+              "secondary-fixed": "#ffe088"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(30px);
+      }
+      .liquid-crimson {
+        background: linear-gradient(135deg, #6b000e 0%, #960018 100%);
+      }
+      .crimson-aura {
+        box-shadow: 0 12px 24px rgba(150, 0, 24, 0.15);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-background font-body selection:bg-primary-container selection:text-white">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-white/70 backdrop-blur-[30px] shadow-[0_20_40px_rgba(26,28,29,0.04)]">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#960018] text-2xl" data-icon="sensors">sensors</span>
+<h1 class="font-['Plus_Jakarta_Sans'] font-bold tracking-tight text-xl font-black text-[#960018] drop-shadow-[0_0_8px_rgba(150,0,24,0.4)]">Sejong Pulse</h1>
+</div>
+<nav class="hidden md:flex gap-8">
+<a class="text-[#960018] font-bold text-sm tracking-wide" href="#">Dashboard</a>
+<a class="text-slate-500 hover:text-[#960018] transition-all text-sm tracking-wide" href="#">Community</a>
+<a class="text-slate-500 hover:text-[#960018] transition-all text-sm tracking-wide" href="#">Campus Map</a>
+</nav>
+<button class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center hover:bg-white/20 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="account_circle">account_circle</span>
+</button>
+</header>
+<main class="pt-24 pb-32 px-4 md:px-8 max-w-7xl mx-auto space-y-12">
+<!-- Hero Display Section -->
+<section class="flex flex-col gap-2">
+<span class="text-[10px] font-medium uppercase tracking-[0.15em] text-secondary font-headline">Live Overview</span>
+<h2 class="text-4xl md:text-5xl font-['Plus_Jakarta_Sans'] font-extrabold tracking-tight text-on-background">Utility Hub</h2>
+</section>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Map Container (Large Glass Pod) -->
+<div class="md:col-span-8 relative overflow-hidden rounded-[2rem] bg-surface-container-low min-h-[500px] shadow-[0px_20px_40px_rgba(26,28,29,0.04)]">
+<!-- Map Background -->
+<div class="absolute inset-0 z-0">
+<img alt="Minimalist top down architectural campus map of Sejong University" class="w-full h-full object-cover grayscale opacity-40" data-location="Seoul" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDR6MADpPDSJgudlkf-sXYnBIrVE6HJQko0HAZSqInp2QDwc99w5qu5uhpXItCQ2BuJd6dlLHYvm2Q_-iIsocO-LrO8gkg8XbM6Yk5Bxu8B-ZWSt3oqi4EFgImvl_mvAPDsb9PKIfCbIQN_YXecKxe8ls14QxQR-6zMxGfz3CRZqdhd1CIr6ddWxFzuD1we8e0vqXfgk_0wYH8m7EpKaXjq9u0AbmLnEcWIJBP1WtxektSYYtYnUVyo_RoTNkl6SKdFOiFRdv7xvUYS"/>
+<div class="absolute inset-0 bg-gradient-to-tr from-surface via-transparent to-transparent"></div>
+</div>
+<!-- Custom Map Overlay Elements -->
+<div class="absolute inset-0 z-10 p-8 pointer-events-none">
+<div class="flex flex-col h-full justify-between">
+<div class="flex justify-between items-start pointer-events-auto">
+<div class="glass-card px-4 py-2 rounded-2xl flex items-center gap-3 border border-white/20">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-xs font-semibold tracking-wide text-on-surface">Campus Pulse: Active</span>
+</div>
+<div class="flex gap-2">
+<button class="w-10 h-10 glass-card rounded-xl flex items-center justify-center text-on-surface shadow-sm border border-white/20 pointer-events-auto">
+<span class="material-symbols-outlined" data-icon="layers">layers</span>
+</button>
+<button class="w-10 h-10 glass-card rounded-xl flex items-center justify-center text-on-surface shadow-sm border border-white/20 pointer-events-auto">
+<span class="material-symbols-outlined" data-icon="my_location">my_location</span>
+</button>
+</div>
+</div>
+<!-- Pulse Pins -->
+<div class="absolute top-[30%] left-[45%] pointer-events-auto group">
+<div class="relative">
+<div class="absolute -inset-4 bg-primary/20 rounded-full blur-xl animate-pulse"></div>
+<div class="relative w-4 h-4 rounded-full bg-primary border-2 border-white shadow-lg cursor-pointer"></div>
+<div class="absolute top-full mt-2 left-1/2 -translate-x-1/2 glass-card py-2 px-3 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-white/20">
+<p class="text-[10px] font-bold text-primary mb-0.5">STUDY SPOT VIBE</p>
+<p class="text-[11px] font-medium text-on-surface">Library B1: Silent Focus</p>
+</div>
+</div>
+</div>
+<div class="absolute top-[60%] left-[20%] pointer-events-auto group">
+<div class="relative">
+<div class="absolute -inset-4 bg-secondary/20 rounded-full blur-xl animate-pulse"></div>
+<div class="relative w-4 h-4 rounded-full bg-secondary border-2 border-white shadow-lg cursor-pointer"></div>
+<div class="absolute top-full mt-2 left-1/2 -translate-x-1/2 glass-card py-2 px-3 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-white/20">
+<p class="text-[10px] font-bold text-secondary mb-0.5">STUDY SPOT VIBE</p>
+<p class="text-[11px] font-medium text-on-surface">Student Union: Ambient Cafe</p>
+</div>
+</div>
+</div>
+<div class="mt-auto pointer-events-auto">
+<div class="glass-card p-6 rounded-[1.5rem] w-64 border border-white/20">
+<h3 class="text-sm font-bold text-on-background mb-4">Location Search</h3>
+<div class="flex items-center gap-3 bg-white/50 p-3 rounded-xl border border-white/30">
+<span class="material-symbols-outlined text-slate-400 text-sm" data-icon="search">search</span>
+<span class="text-xs text-slate-400">Find a vibe...</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Trending Tags Side Pod -->
+<div class="md:col-span-4 flex flex-col gap-6">
+<!-- Tags Panel -->
+<div class="bg-surface-container-lowest rounded-[2rem] p-8 shadow-[0px_20px_40px_rgba(26,28,29,0.04)] h-full border border-white/10">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-headline font-bold text-lg tracking-tight">Trending #Tags</h3>
+<span class="material-symbols-outlined text-secondary" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<div class="flex flex-wrap gap-3">
+<!-- Tag Chips -->
+<div class="bg-secondary-container/20 px-4 py-2.5 rounded-full border border-secondary-container/40 flex items-center gap-2 group hover:bg-secondary-container transition-all cursor-pointer">
+<span class="text-xs font-bold text-on-secondary-container font-headline tracking-wide">#KondaeDiscount</span>
+</div>
+<div class="bg-secondary-container/10 px-4 py-2.5 rounded-full border border-secondary-container/20 flex items-center gap-2 hover:bg-secondary-container/30 transition-all cursor-pointer">
+<span class="text-xs font-bold text-on-secondary-container font-headline tracking-wide">#MidtermCram</span>
+</div>
+<div class="bg-secondary-container/10 px-4 py-2.5 rounded-full border border-secondary-container/20 flex items-center gap-2 hover:bg-secondary-container/30 transition-all cursor-pointer">
+<span class="text-xs font-bold text-on-secondary-container font-headline tracking-wide">#FestivalLineup</span>
+</div>
+<div class="bg-secondary-container/10 px-4 py-2.5 rounded-full border border-secondary-container/20 flex items-center gap-2 hover:bg-secondary-container/30 transition-all cursor-pointer">
+<span class="text-xs font-bold text-on-secondary-container font-headline tracking-wide">#SejongSquare</span>
+</div>
+<div class="bg-secondary-container/10 px-4 py-2.5 rounded-full border border-secondary-container/20 flex items-center gap-2 hover:bg-secondary-container/30 transition-all cursor-pointer">
+<span class="text-xs font-bold text-on-secondary-container font-headline tracking-wide">#LateNightSnack</span>
+</div>
+<div class="bg-secondary-container/10 px-4 py-2.5 rounded-full border border-secondary-container/20 flex items-center gap-2 hover:bg-secondary-container/30 transition-all cursor-pointer">
+<span class="text-xs font-bold text-on-secondary-container font-headline tracking-wide">#GunjaEat</span>
+</div>
+</div>
+<div class="mt-12 space-y-4">
+<p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Vibe Analytics</p>
+<div class="flex items-end gap-1 h-20 px-2">
+<div class="flex-1 bg-primary/20 rounded-t-lg h-[40%]"></div>
+<div class="flex-1 bg-primary/40 rounded-t-lg h-[60%]"></div>
+<div class="flex-1 bg-primary rounded-t-lg h-[90%]"></div>
+<div class="flex-1 bg-primary/60 rounded-t-lg h-[50%]"></div>
+<div class="flex-1 bg-primary/30 rounded-t-lg h-[30%]"></div>
+<div class="flex-1 bg-primary/80 rounded-t-lg h-[75%]"></div>
+</div>
+<div class="flex justify-between text-[10px] font-medium text-slate-500">
+<span>08:00</span>
+<span>12:00</span>
+<span>18:00</span>
+<span>00:00</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Metric Pods -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="glass-card p-6 rounded-[1.5rem] border border-white/20 shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 rounded-2xl bg-primary-container flex items-center justify-center text-white crimson-aura">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Hubs</p>
+<p class="text-lg font-extrabold text-on-background">1,204</p>
+</div>
+</div>
+<div class="glass-card p-6 rounded-[1.5rem] border border-white/20 shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 rounded-2xl bg-surface-container-highest flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="notifications_active">notifications_active</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Alerts</p>
+<p class="text-lg font-extrabold text-on-background">2 Active</p>
+</div>
+</div>
+<div class="glass-card p-6 rounded-[1.5rem] border border-white/20 shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 rounded-2xl bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="local_fire_department">local_fire_department</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pulse Score</p>
+<p class="text-lg font-extrabold text-on-background">High</p>
+</div>
+</div>
+<div class="glass-card p-6 rounded-[1.5rem] border border-white/20 shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 rounded-2xl bg-surface-container-highest flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" data-icon="wifi_tethering">wifi_tethering</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Live Connect</p>
+<p class="text-lg font-extrabold text-on-background">Stable</p>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-white/60 backdrop-blur-[40px] shadow-[0_-10px_30px_rgba(0,0,0,0.05)] rounded-t-[2rem]">
+<a class="flex flex-col items-center justify-center text-slate-400 p-3 hover:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="amp_stories">amp_stories</span>
+<span class="text-[10px] font-medium uppercase tracking-[0.05em] font-['Plus_Jakarta_Sans']">Feed</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 p-3 hover:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="hub">hub</span>
+<span class="text-[10px] font-medium uppercase tracking-[0.05em] font-['Plus_Jakarta_Sans']">Channels</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 p-3 hover:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="chat_bubble">chat_bubble</span>
+<span class="text-[10px] font-medium uppercase tracking-[0.05em] font-['Plus_Jakarta_Sans']">Chats</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-gradient-to-br from-[#6b000e] to-[#960018] text-white rounded-2xl p-3 shadow-[0_12px_24px_rgba(150,0,24,0.15)] scale-90 duration-300" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="grid_view" data-weight="fill" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span class="text-[10px] font-medium uppercase tracking-[0.05em] font-['Plus_Jakarta_Sans']">Hub</span>
+</a>
+</nav>
+</body></html>

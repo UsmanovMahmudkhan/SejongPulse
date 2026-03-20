@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sejong Pulse | Verification</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary": "#ffffff",
+              "on-error-container": "#93000a",
+              "on-tertiary-fixed-variant": "#00497b",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-fixed": "#410005",
+              "primary-container": "#960018",
+              "outline-variant": "#e2bebb",
+              "tertiary": "#003459",
+              "surface": "#f9f9fb",
+              "surface-container-high": "#e8e8ea",
+              "on-secondary-fixed": "#241a00",
+              "inverse-surface": "#2f3132",
+              "inverse-on-surface": "#f0f0f2",
+              "on-tertiary-container": "#88bbf4",
+              "surface-tint": "#b6212b",
+              "tertiary-fixed-dim": "#9ccaff",
+              "inverse-primary": "#ffb3af",
+              "secondary-container": "#fed65b",
+              "surface-container-low": "#f3f3f5",
+              "on-secondary-container": "#745c00",
+              "tertiary-container": "#004b7d",
+              "surface-container": "#edeef0",
+              "surface-bright": "#f9f9fb",
+              "surface-container-highest": "#e2e2e4",
+              "primary-fixed-dim": "#ffb3af",
+              "error-container": "#ffdad6",
+              "surface-variant": "#e2e2e4",
+              "on-tertiary-fixed": "#001d35",
+              "on-surface-variant": "#5a403f",
+              "on-error": "#ffffff",
+              "on-primary": "#ffffff",
+              "surface-dim": "#d9dadc",
+              "on-primary-fixed-variant": "#930017",
+              "on-secondary-fixed-variant": "#574500",
+              "outline": "#8e706e",
+              "on-primary-container": "#ff9d98",
+              "error": "#ba1a1a",
+              "background": "#f9f9fb",
+              "on-tertiary": "#ffffff",
+              "primary-fixed": "#ffdad7",
+              "primary": "#6b000e",
+              "secondary-fixed-dim": "#e9c349",
+              "tertiary-fixed": "#d0e4ff",
+              "on-background": "#1a1c1d",
+              "secondary": "#735c00",
+              "on-surface": "#1a1c1d",
+              "secondary-fixed": "#ffe088"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-plate {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(226, 190, 187, 0.15);
+        }
+        .crimson-gradient {
+            background: linear-gradient(135deg, #6b000e 0%, #960018 100%);
+        }
+        .gold-glow {
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-background min-h-screen selection:bg-primary-container selection:text-white">
+<!-- TopAppBar Suppressed for focused journey as per shell mandate -->
+<main class="relative min-h-screen flex flex-col items-center justify-center px-6 py-12 overflow-hidden">
+<!-- Background Atmospheric Auras -->
+<div class="absolute top-[-10%] right-[-5%] w-[40rem] h-[40rem] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="absolute bottom-[-10%] left-[-5%] w-[35rem] h-[35rem] bg-secondary/5 rounded-full blur-[100px] pointer-events-none"></div>
+<!-- Verification Container -->
+<div class="w-full max-w-lg z-10">
+<!-- Branding/Progress Header -->
+<div class="mb-12 text-center">
+<div class="inline-flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary-container text-3xl" data-icon="sensors">sensors</span>
+<span class="font-headline font-black text-2xl tracking-tight text-primary-container drop-shadow-[0_0_8px_rgba(150,0,24,0.3)]">Sejong Pulse</span>
+</div>
+<div class="flex justify-center gap-2 mb-4">
+<div class="h-1.5 w-12 rounded-full crimson-gradient shadow-[0_4px_12px_rgba(150,0,24,0.2)]"></div>
+<div class="h-1.5 w-12 rounded-full bg-surface-container-highest"></div>
+</div>
+<h1 class="font-headline text-4xl font-extrabold tracking-tight text-on-background mb-3">Identity Synthesis</h1>
+<p class="text-on-surface-variant font-medium">Verify your student credentials to join the pulse.</p>
+</div>
+<!-- Step 1: Pseudonym Selection (Stacked Glass Plates) -->
+<div class="relative group">
+<!-- Underlay Plate -->
+<div class="absolute inset-0 translate-y-4 scale-95 opacity-40 glass-plate rounded-[2rem] -z-10"></div>
+<!-- Main Content Plate -->
+<div class="glass-plate rounded-[2rem] p-8 md:p-10 shadow-[0_20_40px_rgba(26,28,29,0.04)]">
+<div class="mb-10">
+<label class="block font-headline font-bold text-xs uppercase tracking-[0.1em] text-secondary mb-4 flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary gold-glow"></span>
+                            Phase 01: Digital Alias
+                        </label>
+<p class="text-on-surface-variant text-sm mb-6 leading-relaxed">Choose a unique pseudonym that will represent you within the campus channels. This cannot be changed later.</p>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-none rounded-2xl py-5 px-6 font-headline font-semibold text-lg text-on-background focus:ring-2 focus:ring-primary-container/20 transition-all placeholder:text-slate-400" placeholder="e.g., Gwanggaeto_Hacker" type="text"/>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-xl" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<!-- Suggestions Bento -->
+<div class="mt-8 grid grid-cols-2 gap-3">
+<button class="p-4 rounded-xl bg-white/40 border border-outline-variant/10 text-left hover:bg-white/80 transition-all group">
+<span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Randomized</span>
+<span class="text-on-surface font-semibold text-sm">King_Sejong_99</span>
+</button>
+<button class="p-4 rounded-xl bg-white/40 border border-outline-variant/10 text-left hover:bg-white/80 transition-all group">
+<span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Academic</span>
+<span class="text-on-surface font-semibold text-sm">Scholar_Pulse</span>
+</button>
+</div>
+</div>
+<!-- CTA -->
+<button class="w-full crimson-gradient text-white font-headline font-bold py-5 rounded-full flex items-center justify-center gap-3 shadow-[0_12px_24px_rgba(150,0,24,0.15)] hover:scale-[1.02] transition-transform active:scale-95 group">
+                        Proceed to Affiliation
+                        <span class="material-symbols-outlined transition-transform group-hover:translate-x-1" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Future Step Visual (Partial) -->
+<div class="mt-8 opacity-40 grayscale pointer-events-none scale-95 translate-y-[-10px] overflow-hidden max-h-24">
+<div class="glass-plate rounded-[2rem] p-8">
+<label class="block font-headline font-bold text-xs uppercase tracking-[0.1em] text-slate-400 mb-4">Phase 02: Affiliation</label>
+</div>
+</div>
+<!-- Footer Help -->
+<div class="mt-12 text-center">
+<button class="text-on-surface-variant font-medium text-sm flex items-center justify-center gap-2 mx-auto hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="help_outline">help_outline</span>
+                    Why do I need a pseudonym?
+                </button>
+</div>
+</div>
+</main>
+<!-- Step 2 Modal-like Overlay (Visual context only) -->
+<div class="hidden fixed inset-0 z-50 flex items-center justify-center px-6">
+<div class="absolute inset-0 bg-slate-900/10 backdrop-blur-md"></div>
+<div class="w-full max-w-lg z-10 glass-plate rounded-[2rem] p-8 md:p-10 shadow-2xl relative">
+<div class="mb-10">
+<label class="block font-headline font-bold text-xs uppercase tracking-[0.1em] text-secondary mb-4 flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary gold-glow"></span>
+                    Phase 02: Academic Anchor
+                </label>
+<h2 class="font-headline text-3xl font-extrabold text-on-background mb-8">Identify your domain</h2>
+<div class="space-y-6">
+<!-- Dorm Selection -->
+<div>
+<span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 px-2">Residential Hall</span>
+<div class="grid grid-cols-3 gap-3">
+<button class="flex flex-col items-center justify-center p-4 rounded-2xl bg-white/40 border-2 border-transparent hover:border-primary-container/20 transition-all">
+<span class="material-symbols-outlined mb-2 text-primary" data-icon="home">home</span>
+<span class="text-xs font-bold text-on-surface">Happy</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 rounded-2xl bg-white/40 border-2 border-primary-container shadow-lg">
+<span class="material-symbols-outlined mb-2 text-primary" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="text-xs font-bold text-on-surface">Saimdang</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 rounded-2xl bg-white/40 border-2 border-transparent hover:border-primary-container/20 transition-all">
+<span class="material-symbols-outlined mb-2 text-slate-400" data-icon="block">block</span>
+<span class="text-xs font-bold text-on-surface">None</span>
+</button>
+</div>
+</div>
+<!-- Major Selection -->
+<div>
+<span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 px-2">Academic Major</span>
+<div class="relative group">
+<div class="w-full bg-surface-container-low rounded-2xl py-5 px-6 font-headline font-semibold text-lg text-on-background flex justify-between items-center cursor-pointer">
+<span>Hotel Management</span>
+<span class="material-symbols-outlined text-secondary" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<button class="w-full crimson-gradient text-white font-headline font-bold py-5 rounded-full shadow-[0_12px_24px_rgba(150,0,24,0.15)]">
+                Finalize Verification
+            </button>
+</div>
+</div>
+<!-- Decorative Corner Element -->
+<div class="fixed top-12 left-12 opacity-10 pointer-events-none hidden lg:block">
+<img alt="" class="w-24 h-24" data-alt="University crest abstract line art icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdPrd7hzHL_k5Bnn4YQs8RaFPJQ2Qa5n0a9PGqDGzK_W_T9a0Xm7WF3VvUxlHw2M2bcGjwdHHevfiX1lci-ZMtoAxFlM5H7AyZue5v8s8icbXHXqM90ddjXSgl_lgR_dSdgtVjwDV6fzpgvnCTFSc58-8DiICzvPZuKjHphZCUzB9ba07yIskzGiZslbOxJwFdcz0r4hOtdszhX3lI357c8-3XVHUaPizbmqYcwWM6m6pU7JTugZOifZykCN8UEpcQfoVUsVKbZkqz"/>
+</div>
+</body></html>
