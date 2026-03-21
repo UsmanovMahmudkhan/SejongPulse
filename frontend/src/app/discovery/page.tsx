@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { fetchRecommendations } from "@/lib/api";
+import { supabase } from "@/lib/supabase";
 import Navbar from "@/components/Navbar";
 
 interface Profile {
@@ -24,7 +25,8 @@ export default function SwipeStackPage() {
   useEffect(() => {
     async function loadRecs() {
       try {
-        const data = await fetchRecommendations("user_123");
+        const { data: { user } } = await supabase.auth.getUser();
+        const data = await fetchRecommendations(user?.id || "anonymous");
         setRecommendations(data);
       } catch (error) {
         console.error("Error loading recommendations:", error);

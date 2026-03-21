@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { queryAdvisor } from "@/lib/api";
+import { supabase } from "@/lib/supabase";
 import Navbar from "@/components/Navbar";
 
 interface Message {
@@ -16,9 +17,16 @@ export default function AcademicAdvisorPage() {
     { role: "assistant", content: "Hello! I'm your Sejong Academic Advisor. I have access to the latest curriculum and course catalogs. What are we planning today?" }
   ]);
   const [isTyping, setIsTyping] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    fetchUser();
+
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
@@ -33,7 +41,7 @@ export default function AcademicAdvisorPage() {
     setIsTyping(true);
 
     try {
-      const data = await queryAdvisor(text);
+      const data = await queryAdvisor(text, user?.id);
       const assistantMsg: Message = { role: "assistant", content: data.answer };
       setMessages(prev => [...prev, assistantMsg]);
     } catch (error) {

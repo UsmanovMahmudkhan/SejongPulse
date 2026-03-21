@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { fetchPulses, translatePulse, likePulse, fetchComments, addComment } from "@/lib/api";
+import { fetchPulses, translatePulse, likePulse, fetchComments, addComment, createPulse } from "@/lib/api";
+import { supabase } from "@/lib/supabase";
 import Navbar from "@/components/Navbar";
 
 interface Comment {
@@ -26,6 +27,7 @@ interface Pulse {
 export default function PulseFeedPage() {
   const [pulses, setPulses] = useState<Pulse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
   const [translations, setTranslations] = useState<{ [key: string]: string }>({});
   const [showTranslated, setShowTranslated] = useState<{ [key: string]: boolean }>({});
   const [translatingId, setTranslatingId] = useState<string | null>(null);
@@ -39,8 +41,18 @@ export default function PulseFeedPage() {
   const [newComment, setNewComment] = useState("");
   const [postingComment, setPostingComment] = useState<string | null>(null);
 
+  // Create Pulse State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newPulseContent, setNewPulseContent] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Global");
+  const [selectedBuilding, setSelectedBuilding] = useState("Campus");
+  const [isCreating, setIsCreating] = useState(false);
+
   useEffect(() => {
-    async function loadPulses() {
+    const init = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      
       try {
         const data = await fetchPulses();
         setPulses(data);
@@ -55,18 +67,19 @@ export default function PulseFeedPage() {
       } finally {
         setLoading(false);
       }
-    }
-    loadPulses();
+    };
+    init();
   }, []);
 
   const handleLike = async (id: string) => {
+    if (!user) return alert("Please sign in to like pulses.");
     if (isLiked[id]) return;
     
     setIsLiked(prev => ({ ...prev, [id]: true }));
     setLikes(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
     
     try {
-      await likePulse(id);
+      await likePulse(id, user.id);
     } catch (error) {
       console.error("Like error:", error);
     }
@@ -87,11 +100,12 @@ export default function PulseFeedPage() {
   };
 
   const handleAddComment = async (id: string) => {
+    if (!user) return alert("Please sign in to comment.");
     if (!newComment.trim()) return;
     
     setPostingComment(id);
     try {
-      const data = await addComment(id, newComment);
+      const data = await addComment(id, newComment, user.id);
       setComments(prev => ({ ...prev, [id]: [...(prev[id] || []), data] }));
       setNewComment("");
       setPulses(prev => prev.map(p => p.id === id ? { ...p, comments_count: p.comments_count + 1 } : p));
@@ -105,6 +119,24 @@ export default function PulseFeedPage() {
   const handleShare = (pulse: Pulse) => {
     navigator.clipboard.writeText(`${window.location.origin}/pulse/${pulse.id}`);
     alert("Pulse Link copied to clipboard! 🚀");
+  };
+
+  const handleCreatePulse = async () => {
+    if (!user) return alert("Please sign in to post.");
+    if (!newPulseContent.trim()) return;
+
+    setIsCreating(true);
+    try {
+      const data = await createPulse(newPulseContent, user.id, selectedCategory, selectedBuilding);
+      setPulses(prev => [data, ...prev]);
+      setNewPulseContent("");
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Create pulse error:", error);
+      alert("Failed to broadcast pulse.");
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   const handleTranslate = async (id: string, content: string) => {
@@ -319,10 +351,82 @@ export default function PulseFeedPage() {
       </main>
 
       <div className="fixed bottom-24 right-6 flex flex-col gap-4 z-50">
-         <button className="w-16 h-16 rounded-[2rem] liquid-gradient text-white shadow-[0_20px_40px_rgba(150,0,24,0.3)] flex items-center justify-center hover:scale-110 active:scale-95 transition-all outline outline-4 outline-white/30 border border-white/20 crimson-pulse-glow">
+         <button 
+           onClick={() => setIsModalOpen(true)}
+           className="w-16 h-16 rounded-[2rem] liquid-gradient text-white shadow-[0_20px_40px_rgba(150,0,24,0.3)] flex items-center justify-center hover:scale-110 active:scale-95 transition-all outline outline-4 outline-white/30 border border-white/20 crimson-pulse-glow"
+         >
             <span className="material-symbols-outlined text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>add</span>
          </button>
       </div>
+
+      {/* Create Pulse Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-md" onClick={() => setIsModalOpen(false)}></div>
+          <div className="relative bg-white rounded-[2.5rem] w-full max-w-lg p-8 shadow-2xl animate-fade-in-up border border-white/20">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-headline font-black text-on-background">Broadcast Pulse</h2>
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="w-10 h-10 rounded-full hover:bg-black/5 flex items-center justify-center transition-colors"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <textarea 
+              value={newPulseContent}
+              onChange={(e) => setNewPulseContent(e.target.value)}
+              placeholder="What's the campus pulse today?"
+              className="w-full h-40 bg-slate-50 rounded-3xl p-6 text-sm font-medium border-none focus:ring-2 focus:ring-primary/20 resize-none transition-all outline-none"
+            ></textarea>
+
+            <div className="mt-6 grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">Channel</label>
+                <select 
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 text-xs font-bold outline-none focus:ring-2 focus:ring-primary/20"
+                >
+                  <option value="Global">Global Feed</option>
+                  <option value="Academic">Academic</option>
+                  <option value="Events">Campus Events</option>
+                  <option value="Market">Marketplace</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">Location</label>
+                <select 
+                  value={selectedBuilding}
+                  onChange={(e) => setSelectedBuilding(e.target.value)}
+                  className="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 text-xs font-bold outline-none focus:ring-2 focus:ring-primary/20"
+                >
+                  <option value="Campus">Main Campus</option>
+                  <option value="Gwanggaeto">Gwanggaeto Hall</option>
+                  <option value="Student Union">Student Union</option>
+                  <option value="Gunja">Gunja Building</option>
+                </select>
+              </div>
+            </div>
+
+            <button 
+              onClick={handleCreatePulse}
+              disabled={isCreating || !newPulseContent.trim()}
+              className="w-full mt-8 h-14 rounded-2xl liquid-gradient text-white font-black uppercase tracking-[0.2em] shadow-xl hover:shadow-2xl transition-all active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50"
+            >
+              {isCreating ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                <>
+                  <span>Broadcast</span>
+                  <span className="material-symbols-outlined text-[18px]">send</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
 
       <Navbar />
     </div>

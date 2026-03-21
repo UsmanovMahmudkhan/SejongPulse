@@ -4,11 +4,16 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 import os
 from dotenv import load_dotenv
-from openai import OpenAI
+from supabase import create_client, Client
 
 load_dotenv()
 
 app = FastAPI(title="Sejong Pulse API", version="0.1.0")
+
+# Supabase Configuration
+supabase_url = os.getenv("SUPABASE_URL")
+supabase_key = os.getenv("SUPABASE_KEY")
+supabase: Client = create_client(supabase_url, supabase_key)
 
 # OpenAI Client for OpenRouter
 client = OpenAI(
@@ -52,21 +57,14 @@ class Pulse(BaseModel):
     likes: int = 0
     comments_count: int = 0
 
-# Mock Data Stores
-MOCK_PULSES = [
-    {"id": "1", "user_id": "u1", "content": "Looking for a study buddy for Prof. Kim's CS101 class!", "category": "Academic", "building_tag": "Library", "created_at": "2026-03-21T00:00:00Z", "likes": 24, "comments_count": 8},
-    {"id": "2", "user_id": "u2", "content": "Best coffee at the Student Union today! ☕️", "category": "Social", "building_tag": "Student Union", "created_at": "2026-03-21T01:00:00Z", "likes": 42, "comments_count": 12},
-]
-
-MOCK_COMMENTS = {
-    "1": [
-        {"id": "c1", "pulse_id": "1", "user_id": "u3", "content": "I'm interested! When do you want to meet?", "created_at": "2026-03-21T02:00:00Z"},
-    ],
-    "2": []
-}
-
 class LikeRequest(BaseModel):
     user_id: str
+
+class CreatePulseRequest(BaseModel):
+    user_id: str
+    content: str
+    category: str = "Global"
+    building_tag: str = "Campus"
 
 class CommentRequest(BaseModel):
     user_id: str
@@ -87,40 +85,95 @@ async def health_check():
 
 @app.get("/api/pulses", response_model=List[Pulse])
 async def list_pulses():
-    return MOCK_PULSES
+    response = supabase.table("pulses").select("*").order("created_at", desc=True).execute()
+    # Map Supabase columns to Pulse model field names if different
+    pulses = []
+    for row in response.data:
+        pulses.append(Pulse(
+            id=row["id"],
+            user_id=row.get("author_id", "anonymous"),
+            content=row["content"],
+            category=row.get("category", "Global"),
+            building_tag=row.get("building_tag", "Campus"),
+            created_at=row["created_at"],
+            likes=row.get("likes_count", 0),
+            comments_count=row.get("comments_count", 0)
+        ))
+    return pulses
+
+@app.post("/api/pulses", response_model=Pulse)
+async def create_pulse(request: CreatePulseRequest):
+    new_pulse = {
+        "author_id": request.user_id,
+        "content": request.content,
+        "category": request.category,
+        "building_tag": request.building_tag
+    }
+    response = supabase.table("pulses").insert(new_pulse).execute()
+    if not response.data:
+        raise HTTPException(status_code=500, detail="Failed to create pulse")
+    
+    row = response.data[0]
+    return Pulse(
+        id=row["id"],
+        user_id=row.get("author_id", "anonymous"),
+        content=row["content"],
+        category=row.get("category", "Global"),
+        building_tag=row.get("building_tag", "Campus"),
+        created_at=row["created_at"],
+        likes=0,
+        comments_count=0
+    )
 
 @app.post("/api/pulses/{pulse_id}/like")
 async def like_pulse(pulse_id: str, request: LikeRequest):
-    for pulse in MOCK_PULSES:
-        if pulse["id"] == pulse_id:
-            pulse["likes"] += 1
-            return {"status": "success", "likes": pulse["likes"]}
-    raise HTTPException(status_code=404, detail="Pulse not found")
+    # In a real app, you'd check if the user already liked it in a join table
+    # For now, we'll just increment the count in the pulse table
+    pulse_data = supabase.table("pulses").select("likes_count").eq("id", pulse_id).single().execute()
+    if not pulse_data.data:
+        raise HTTPException(status_code=404, detail="Pulse not found")
+    
+    new_likes = pulse_data.data["likes_count"] + 1
+    update_res = supabase.table("pulses").update({"likes_count": new_likes}).eq("id", pulse_id).execute()
+    
+    return {"status": "success", "likes": new_likes}
 
 @app.get("/api/pulses/{pulse_id}/comments", response_model=List[Comment])
 async def get_comments(pulse_id: str):
-    return MOCK_COMMENTS.get(pulse_id, [])
+    response = supabase.table("comments").select("*").eq("pulse_id", pulse_id).order("created_at").execute()
+    return [Comment(
+        id=c["id"],
+        pulse_id=c["pulse_id"],
+        user_id=c.get("author_id", "anonymous"),
+        content=c["content"],
+        created_at=c["created_at"]
+    ) for c in response.data]
 
 @app.post("/api/pulses/{pulse_id}/comment")
 async def add_comment(pulse_id: str, request: CommentRequest):
-    if pulse_id not in MOCK_COMMENTS:
-        MOCK_COMMENTS[pulse_id] = []
-    
     new_comment = {
-        "id": f"c{len(MOCK_COMMENTS[pulse_id]) + 1}",
         "pulse_id": pulse_id,
-        "user_id": request.user_id,
-        "content": request.content,
-        "created_at": "2026-03-22T00:00:00Z"
+        "author_id": request.user_id,
+        "content": request.content
     }
-    MOCK_COMMENTS[pulse_id].append(new_comment)
+    response = supabase.table("comments").insert(new_comment).execute()
+    if not response.data:
+        raise HTTPException(status_code=500, detail="Failed to add comment")
     
-    for pulse in MOCK_PULSES:
-        if pulse["id"] == pulse_id:
-            pulse["comments_count"] += 1
-            break
-            
-    return new_comment
+    # Update comment count
+    pulse_data = supabase.table("pulses").select("comments_count").eq("id", pulse_id).single().execute()
+    if pulse_data.data:
+        new_count = pulse_data.data["comments_count"] + 1
+        supabase.table("pulses").update({"comments_count": new_count}).eq("id", pulse_id).execute()
+        
+    comment = response.data[0]
+    return Comment(
+        id=comment["id"],
+        pulse_id=pulse_id,
+        user_id=comment["author_id"],
+        content=comment["content"],
+        created_at=comment["created_at"]
+    )
 
 @app.post("/api/pulses/translate")
 async def translate_pulse(request: TranslationRequest):
@@ -142,27 +195,21 @@ async def translate_pulse(request: TranslationRequest):
 
 @app.get("/api/recommendations/{user_id}", response_model=List[Profile])
 async def get_recommendations(user_id: str):
-    # Mocked ranking algorithm
-    return [
-        Profile(
-            id="rec1",
-            pseudonym="CodeMaster",
-            major="AI Engineering",
-            year=2025,
-            gpa=4.4,
-            skills=["Machine Learning", "C++"],
-            current_building="Gwanggaeto"
-        ),
-        Profile(
-            id="rec2",
-            pseudonym="DesignQueen",
-            major="Digital Arts",
-            year=2026,
-            gpa=3.9,
-            skills=["UI/UX", "Figma"],
-            current_building="Student Union"
-        )
-    ]
+    # Fetch all profiles except the current user for discovery
+    response = supabase.table("profiles").select("*").neq("id", user_id).limit(10).execute()
+    
+    recs = []
+    for p in response.data:
+        recs.append(Profile(
+            id=p["id"],
+            pseudonym=p["pseudonym"],
+            major=p["major"],
+            year=p.get("year", 2026),
+            gpa=float(p.get("gpa", 4.0)),
+            skills=p.get("skills", []),
+            current_building=p.get("current_building", "Main")
+        ))
+    return recs
 
 import json
 
@@ -192,9 +239,20 @@ def search_knowledge(query: str, limit: int = 5):
     return relevant_courses
 
 @app.post("/api/advisor/query")
-async def advisor_query(query: str):
+async def advisor_query(query: str, user_id: Optional[str] = None):
     relevant_data = search_knowledge(query)
     
+    # Fetch User Profile Context
+    user_context = ""
+    if user_id:
+        try:
+            profile_res = supabase.table("profiles").select("*").eq("id", user_id).single().execute()
+            if profile_res.data:
+                p = profile_res.data
+                user_context = f"Student Profile: Major in {p['major']}, Building: {p['current_building']}."
+        except Exception:
+            pass
+
     context = ""
     if relevant_data:
         context = "Here are some relevant courses I found in the 2026 Spring schedule:\n"
@@ -202,10 +260,10 @@ async def advisor_query(query: str):
             context += f"- {item['course_name']} ({item['course_code']}) taught by {item['professor']}. {item['syllabus_summary']}\n"
     
     system_prompt = (
-        "You are Sejong University's AI Academic Advisor. "
+        f"You are Sejong University's AI Academic Advisor. {user_context} "
         "Answer queries based on the provided context if available. "
         "If the context doesn't cover the query, use your general knowledge about Sejong University. "
-        "Keep it professional but accessible. "
+        "Keep it professional but accessible."
     )
     
     if context:
@@ -231,14 +289,19 @@ async def advisor_query(query: str):
 
 @app.get("/api/profiles/{user_id}", response_model=Profile)
 async def get_profile(user_id: str):
+    response = supabase.table("profiles").select("*").eq("id", user_id).single().execute()
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    
+    p = response.data
     return Profile(
-        id=user_id,
-        pseudonym="CrimsonKnight",
-        major="Computer Science",
-        year=2024,
-        gpa=4.2,
-        skills=["Python", "Next.js", "AI"],
-        current_building="Gwanggaeto"
+        id=p["id"],
+        pseudonym=p["pseudonym"],
+        major=p["major"],
+        year=p.get("year", 2026),
+        gpa=float(p.get("gpa", 4.0)),
+        skills=p.get("skills", []),
+        current_building=p.get("current_building", "Main")
     )
 
 if __name__ == "__main__":

@@ -22,19 +22,20 @@ export async function fetchRecommendations(userId: string) {
   return res.json();
 }
 
-export async function queryAdvisor(query: string) {
-  const res = await fetch(`${API_BASE_URL}/advisor/query?query=${encodeURIComponent(query)}`, {
+export async function queryAdvisor(query: string, userId?: string) {
+  const url = `${API_BASE_URL}/advisor/query?query=${encodeURIComponent(query)}${userId ? `&user_id=${userId}` : ''}`;
+  const res = await fetch(url, {
     method: 'POST',
   });
   if (!res.ok) throw new Error('Failed to query advisor');
   return res.json();
 }
 
-export async function likePulse(pulseId: string) {
+export async function likePulse(pulseId: string, userId: string) {
   const res = await fetch(`${API_BASE_URL}/pulses/${pulseId}/like`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ user_id: "user_123" }),
+    body: JSON.stringify({ user_id: userId }),
   });
   if (!res.ok) throw new Error('Failed to like pulse');
   return res.json();
@@ -46,12 +47,22 @@ export async function fetchComments(pulseId: string) {
   return res.json();
 }
 
-export async function addComment(pulseId: string, content: string) {
+export async function addComment(pulseId: string, content: string, userId: string) {
   const res = await fetch(`${API_BASE_URL}/pulses/${pulseId}/comment`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ user_id: "user_123", content }),
+    body: JSON.stringify({ user_id: userId, content }),
   });
   if (!res.ok) throw new Error('Failed to add comment');
+  return res.json();
+}
+
+export async function createPulse(content: string, userId: string, category: string, building: string) {
+  const res = await fetch(`${API_BASE_URL}/pulses`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId, content, category, building_tag: building }),
+  });
+  if (!res.ok) throw new Error('Failed to create pulse');
   return res.json();
 }

@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -9,15 +10,46 @@ export default function OnboardingPage() {
   const [pseudonym, setPseudonym] = useState("");
   const [residentialHall, setResidentialHall] = useState("");
   const [major, setMajor] = useState("Hotel Management");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push("/login");
+      }
+    };
+    checkUser();
+  }, [router]);
 
   const handleNextStep = () => {
     setStep(2);
   };
 
-  const handleFinalize = () => {
-    // In a real app, this would save to Supabase.
-    // Proceed to the Pulse engine.
-    router.push("/pulse");
+  const handleFinalize = async () => {
+    setLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No user found");
+
+      const { error } = await supabase.from("profiles").insert([
+        {
+          id: user.id,
+          pseudonym,
+          major,
+          current_building: residentialHall,
+          year: 2026, // Default for now
+          gpa: 4.0 // Default for now
+        }
+      ]);
+
+      if (error) throw error;
+      router.push("/pulse");
+    } catch (error: any) {
+      alert(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

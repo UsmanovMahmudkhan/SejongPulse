@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 import Navbar from "@/components/Navbar";
 
 interface Profile {
@@ -15,22 +17,44 @@ interface Profile {
 }
 
 export default function ProfilePage() {
+  const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
-    // Mocking a fetch from /api/profiles/u1
-    setProfile({
-      id: "u1",
-      pseudonym: "CrimsonKnight",
-      major: "Computer Science",
-      year: 2024,
-      gpa: 4.2,
-      skills: ["Python", "Next.js", "AI"],
-      current_building: "Gwanggaeto"
-    });
-  }, []);
+    const fetchProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push("/login");
+        return;
+      }
 
-  if (!profile) return null;
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching profile:", error);
+        // If profile doesn't exist, redirect to onboarding
+        router.push("/onboarding");
+        return;
+      }
+      setProfile(data);
+    };
+    fetchProfile();
+  }, [router]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
+
+  if (!profile) return (
+    <div className="min-h-screen flex items-center justify-center bg-surface">
+      <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
 
   return (
     <div className="bg-surface min-h-screen flex flex-col">
@@ -41,7 +65,7 @@ export default function ProfilePage() {
           </Link>
           <h1 className="font-headline font-bold text-lg text-on-background">Student Identity</h1>
         </div>
-        <button className="text-primary font-bold text-sm">Edit</button>
+        <button onClick={handleLogout} className="text-primary font-black text-[10px] uppercase tracking-widest hover:bg-primary/5 px-4 py-2 rounded-xl transition-all">Sign Out</button>
       </header>
 
       <main className="pt-24 pb-32 px-6 max-w-xl mx-auto w-full space-y-8">
