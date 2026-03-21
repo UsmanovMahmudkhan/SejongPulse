@@ -37,7 +37,7 @@ export default function LoginPage() {
 
             {/* CTA Button */}
             <Link
-              href="/pulse"
+              href="/onboarding"
               className="w-full liquid-gradient text-white flex items-center justify-center gap-3 py-5 px-6 rounded-full font-headline font-bold text-lg crimson-aura active:scale-95 transition-all duration-300"
             >
               <span>Mock Sign In (@sju.ac.kr)</span>

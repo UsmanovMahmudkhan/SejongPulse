@@ -35,6 +35,13 @@ class Profile(BaseModel):
     skills: List[str] = []
     current_building: Optional[str] = None
 
+class Comment(BaseModel):
+    id: str
+    pulse_id: str
+    user_id: str
+    content: str
+    created_at: str
+
 class Pulse(BaseModel):
     id: str
     user_id: str
@@ -42,12 +49,28 @@ class Pulse(BaseModel):
     category: str
     building_tag: str
     created_at: str
+    likes: int = 0
+    comments_count: int = 0
 
-# Mock Pulse Data (Fallback)
+# Mock Data Stores
 MOCK_PULSES = [
-    {"id": "1", "user_id": "u1", "content": "Looking for a study buddy for Prof. Kim's CS101 class!", "category": "Academic", "building_tag": "Library", "created_at": "2026-03-21T00:00:00Z"},
-    {"id": "2", "user_id": "u2", "content": "Best coffee at the Student Union today! ☕️", "category": "Social", "building_tag": "Student Union", "created_at": "2026-03-21T01:00:00Z"},
+    {"id": "1", "user_id": "u1", "content": "Looking for a study buddy for Prof. Kim's CS101 class!", "category": "Academic", "building_tag": "Library", "created_at": "2026-03-21T00:00:00Z", "likes": 24, "comments_count": 8},
+    {"id": "2", "user_id": "u2", "content": "Best coffee at the Student Union today! ☕️", "category": "Social", "building_tag": "Student Union", "created_at": "2026-03-21T01:00:00Z", "likes": 42, "comments_count": 12},
 ]
+
+MOCK_COMMENTS = {
+    "1": [
+        {"id": "c1", "pulse_id": "1", "user_id": "u3", "content": "I'm interested! When do you want to meet?", "created_at": "2026-03-21T02:00:00Z"},
+    ],
+    "2": []
+}
+
+class LikeRequest(BaseModel):
+    user_id: str
+
+class CommentRequest(BaseModel):
+    user_id: str
+    content: str
 
 class TranslationRequest(BaseModel):
     content: str
@@ -65,6 +88,39 @@ async def health_check():
 @app.get("/api/pulses", response_model=List[Pulse])
 async def list_pulses():
     return MOCK_PULSES
+
+@app.post("/api/pulses/{pulse_id}/like")
+async def like_pulse(pulse_id: str, request: LikeRequest):
+    for pulse in MOCK_PULSES:
+        if pulse["id"] == pulse_id:
+            pulse["likes"] += 1
+            return {"status": "success", "likes": pulse["likes"]}
+    raise HTTPException(status_code=404, detail="Pulse not found")
+
+@app.get("/api/pulses/{pulse_id}/comments", response_model=List[Comment])
+async def get_comments(pulse_id: str):
+    return MOCK_COMMENTS.get(pulse_id, [])
+
+@app.post("/api/pulses/{pulse_id}/comment")
+async def add_comment(pulse_id: str, request: CommentRequest):
+    if pulse_id not in MOCK_COMMENTS:
+        MOCK_COMMENTS[pulse_id] = []
+    
+    new_comment = {
+        "id": f"c{len(MOCK_COMMENTS[pulse_id]) + 1}",
+        "pulse_id": pulse_id,
+        "user_id": request.user_id,
+        "content": request.content,
+        "created_at": "2026-03-22T00:00:00Z"
+    }
+    MOCK_COMMENTS[pulse_id].append(new_comment)
+    
+    for pulse in MOCK_PULSES:
+        if pulse["id"] == pulse_id:
+            pulse["comments_count"] += 1
+            break
+            
+    return new_comment
 
 @app.post("/api/pulses/translate")
 async def translate_pulse(request: TranslationRequest):
@@ -108,8 +164,55 @@ async def get_recommendations(user_id: str):
         )
     ]
 
+import json
+
+KNOWLEDGE_INDEX_PATH = os.path.join(os.path.dirname(__file__), "knowledge_index.json")
+
+def load_knowledge():
+    if os.path.exists(KNOWLEDGE_INDEX_PATH):
+        with open(KNOWLEDGE_INDEX_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {"courses": [], "professors": []}
+
+knowledge_base = load_knowledge()
+
+def search_knowledge(query: str, limit: int = 5):
+    query = query.lower()
+    relevant_courses = []
+    
+    # Simple keyword search in courses
+    for course in knowledge_base.get("courses", []):
+        if (query in course["course_name"].lower() or 
+            query in course["course_code"].lower() or 
+            query in course["professor"].lower()):
+            relevant_courses.append(course)
+        if len(relevant_courses) >= limit:
+            break
+            
+    return relevant_courses
+
 @app.post("/api/advisor/query")
 async def advisor_query(query: str):
+    relevant_data = search_knowledge(query)
+    
+    context = ""
+    if relevant_data:
+        context = "Here are some relevant courses I found in the 2026 Spring schedule:\n"
+        for item in relevant_data:
+            context += f"- {item['course_name']} ({item['course_code']}) taught by {item['professor']}. {item['syllabus_summary']}\n"
+    
+    system_prompt = (
+        "You are Sejong University's AI Academic Advisor. "
+        "Answer queries based on the provided context if available. "
+        "If the context doesn't cover the query, use your general knowledge about Sejong University. "
+        "Keep it professional but accessible. "
+    )
+    
+    if context:
+        user_message = f"Context:\n{context}\n\nQuestion: {query}"
+    else:
+        user_message = query
+
     try:
         completion = client.chat.completions.create(
             extra_headers={
@@ -118,8 +221,8 @@ async def advisor_query(query: str):
             },
             model="google/gemini-2.0-flash-001",
             messages=[
-                {"role": "system", "content": "You are Sejong University's AI Academic Advisor. Answer queries based on general academic knowledge. If you don't know the exact 2026 rule, provide a helpful general response for a Sejong University student. Keep it professional but accessible."},
-                {"role": "user", "content": query},
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message},
             ],
         )
         return {"answer": completion.choices[0].message.content}

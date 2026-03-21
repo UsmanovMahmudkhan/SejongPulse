@@ -29,3 +29,29 @@ export async function queryAdvisor(query: string) {
   if (!res.ok) throw new Error('Failed to query advisor');
   return res.json();
 }
+
+export async function likePulse(pulseId: string) {
+  const res = await fetch(`${API_BASE_URL}/pulses/${pulseId}/like`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: "user_123" }),
+  });
+  if (!res.ok) throw new Error('Failed to like pulse');
+  return res.json();
+}
+
+export async function fetchComments(pulseId: string) {
+  const res = await fetch(`${API_BASE_URL}/pulses/${pulseId}/comments`);
+  if (!res.ok) throw new Error('Failed to fetch comments');
+  return res.json();
+}
+
+export async function addComment(pulseId: string, content: string) {
+  const res = await fetch(`${API_BASE_URL}/pulses/${pulseId}/comment`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: "user_123", content }),
+  });
+  if (!res.ok) throw new Error('Failed to add comment');
+  return res.json();
+}
