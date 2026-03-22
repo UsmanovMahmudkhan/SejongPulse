@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
 
 export default function BroadcastChannelsPage() {
   return (
@@ -118,25 +119,7 @@ export default function BroadcastChannelsPage() {
         </section>
       </main>
 
-      {/* BottomNavBar Shell */}
-      <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/60 dark:bg-slate-900/60 backdrop-blur-[40px] shadow-[0_-10px_30px_rgba(0,0,0,0.05)] rounded-t-[2rem] border-t border-outline-variant/20">
-        <Link href="/pulse" className="flex flex-col items-center justify-center text-slate-400 p-3 hover:scale-110 transition-transform hover:text-primary">
-          <span className="material-symbols-outlined">amp_stories</span>
-          <span className="text-[10px] font-medium uppercase tracking-[0.05em] font-headline mt-1">Feed</span>
-        </Link>
-        <Link href="/messages/channels" className="flex flex-col items-center justify-center liquid-gradient text-white rounded-2xl px-5 py-3 shadow-[0_12px_24px_rgba(150,0,24,0.15)] outline outline-1 outline-white/20">
-          <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>hub</span>
-          <span className="text-[10px] font-medium uppercase tracking-[0.05em] font-headline mt-1">Channels</span>
-        </Link>
-        <Link href="/messages/chats" className="flex flex-col items-center justify-center text-slate-400 p-3 hover:scale-110 transition-transform hover:text-primary">
-          <span className="material-symbols-outlined">chat_bubble</span>
-          <span className="text-[10px] font-medium uppercase tracking-[0.05em] font-headline mt-1">Chats</span>
-        </Link>
-        <Link href="/discovery" className="flex flex-col items-center justify-center text-slate-400 p-3 hover:scale-110 transition-transform hover:text-primary">
-          <span className="material-symbols-outlined">grid_view</span>
-          <span className="text-[10px] font-medium uppercase tracking-[0.05em] font-headline mt-1">Discovery</span>
-        </Link>
-      </nav>
+      <Navbar />
     </>
   );
 }

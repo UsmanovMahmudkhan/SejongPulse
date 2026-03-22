@@ -162,7 +162,12 @@ uritemplate==4.2.0
 urllib3==2.5.0
 uvicorn==0.38.0
 wcwidth==0.2.14
-websockets==16.0
+websockets>=13.0
 xgboost==3.1.2
 xlsxwriter==3.2.9
 supabase==2.11.0
+sentry-sdk
+cloudinary
+algoliasearch
+sendgrid
+slowapi

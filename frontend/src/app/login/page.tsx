@@ -11,30 +11,56 @@ export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [msg, setMsg] = useState<string | null>(null); // Added for success messages
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setMsg(null); // Clear previous messages
 
-    // Domain Validation
-    if (!email.endsWith("@sju.ac.kr")) {
-      setError("Access restricted. Please use your @sju.ac.kr email.");
+    const normalizedEmail = email.trim().toLowerCase();
+    
+    // Domain restriction
+    if (!normalizedEmail.endsWith("@sju.ac.kr") && !normalizedEmail.endsWith("@sejong.ac.kr")) {
+      setError("Only Sejong University emails (@sju.ac.kr or @sejong.ac.kr) are allowed.");
       setLoading(false);
       return;
     }
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
-          email,
+        const { error, data } = await supabase.auth.signUp({
+          email: normalizedEmail,
           password,
         });
-        if (error) throw error;
-        alert("Verification email sent! Check your Sejong inbox.");
+
+        if (error) {
+          setError(error.message);
+          return;
+        }
+
+        // Call our backend to send the welcome email via SendGrid and create Sendbird user
+        if (data.user) {
+          try {
+            await fetch("http://localhost:8000/api/auth/send-welcome", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                to_email: normalizedEmail,
+                pseudonym: `User_${Math.floor(Math.random() * 10000)}`, // temporary pseudonym until onboarding
+                user_id: data.user.id
+              })
+            });
+          } catch (e) {
+            console.error("Failed to call welcome endpoint", e);
+          }
+        }
+
+        setMsg("✓ Verification email sent! Please check your inbox.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({
-          email,
+          email: normalizedEmail,
           password,
         });
         if (error) throw error;

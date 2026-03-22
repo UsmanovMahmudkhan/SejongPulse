@@ -1,4 +1,11 @@
+import { supabase } from '@/lib/supabase';
+
 const API_BASE_URL = 'http://localhost:8000/api';
+
+async function getAuthHeader(): Promise<Record<string, string>> {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session?.access_token ? { 'Authorization': `Bearer ${session.access_token}` } : {};
+}
 
 export async function fetchPulses() {
   const res = await fetch(`${API_BASE_URL}/pulses`);
@@ -22,19 +29,22 @@ export async function fetchRecommendations(userId: string) {
   return res.json();
 }
 
-export async function queryAdvisor(query: string, userId?: string) {
-  const url = `${API_BASE_URL}/advisor/query?query=${encodeURIComponent(query)}${userId ? `&user_id=${userId}` : ''}`;
+export async function queryAdvisor(query: string, userId?: string, history: {role: string, content: string}[] = []) {
+  const url = `${API_BASE_URL}/advisor/query`;
   const res = await fetch(url, {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query, user_id: userId, history }),
   });
   if (!res.ok) throw new Error('Failed to query advisor');
   return res.json();
 }
 
 export async function likePulse(pulseId: string, userId: string) {
+  const headers = await getAuthHeader();
   const res = await fetch(`${API_BASE_URL}/pulses/${pulseId}/like`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...headers },
     body: JSON.stringify({ user_id: userId }),
   });
   if (!res.ok) throw new Error('Failed to like pulse');
@@ -47,10 +57,11 @@ export async function fetchComments(pulseId: string) {
   return res.json();
 }
 
-export async function addComment(pulseId: string, content: string, userId: string) {
+export async function addComment(pulseId: string, userId: string, content: string) {
+  const headers = await getAuthHeader();
   const res = await fetch(`${API_BASE_URL}/pulses/${pulseId}/comment`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...headers },
     body: JSON.stringify({ user_id: userId, content }),
   });
   if (!res.ok) throw new Error('Failed to add comment');
@@ -58,11 +69,23 @@ export async function addComment(pulseId: string, content: string, userId: strin
 }
 
 export async function createPulse(content: string, userId: string, category: string, building: string) {
+  const headers = await getAuthHeader();
   const res = await fetch(`${API_BASE_URL}/pulses`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...headers },
     body: JSON.stringify({ user_id: userId, content, category, building_tag: building }),
   });
   if (!res.ok) throw new Error('Failed to create pulse');
+  return res.json();
+}
+
+export async function updateProfile(userId: string, profileData: any) {
+  const headers = await getAuthHeader();
+  const res = await fetch(`${API_BASE_URL}/profiles/${userId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...headers },
+    body: JSON.stringify(profileData),
+  });
+  if (!res.ok) throw new Error('Failed to update profile');
   return res.json();
 }

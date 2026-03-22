@@ -41,7 +41,7 @@ export default function AcademicAdvisorPage() {
     setIsTyping(true);
 
     try {
-      const data = await queryAdvisor(text, user?.id);
+      const data = await queryAdvisor(text, user?.id, messages);
       const assistantMsg: Message = { role: "assistant", content: data.answer };
       setMessages(prev => [...prev, assistantMsg]);
     } catch (error) {
@@ -67,6 +67,9 @@ export default function AcademicAdvisorPage() {
           </div>
         </div>
         <div className="flex items-center gap-4">
+          <Link href="/notifications" className="p-2 hover:bg-black/5 transition-all text-slate-500 rounded-full flex items-center justify-center">
+            <span className="material-symbols-outlined">notifications</span>
+          </Link>
           <span className="px-3 py-1 bg-emerald-500/10 text-emerald-600 text-[10px] font-bold uppercase tracking-widest rounded-full border border-emerald-500/20">Online</span>
         </div>
       </header>
@@ -150,9 +153,6 @@ export default function AcademicAdvisorPage() {
       <div className="fixed bottom-24 left-0 w-full z-40 px-6 animate-fade-in-up">
         <div className="max-w-3xl mx-auto glass-glow bg-white/40 border border-white/30 rounded-[2.5rem] p-3 shadow-2xl backdrop-blur-2xl">
           <div className="flex items-center gap-3">
-            <button className="w-12 h-12 rounded-full glass-glow bg-white/20 flex items-center justify-center text-slate-500 hover:bg-white/40 transition-all hover:scale-105 active:scale-95">
-              <span className="material-symbols-outlined">attach_file</span>
-            </button>
             <div className="flex-1 bg-white/30 rounded-2xl px-6 py-4 flex items-center gap-3 border border-white/20 shadow-inner">
               <input 
                 className="bg-transparent border-none focus:ring-0 text-sm w-full font-medium text-on-surface outline-none placeholder:text-slate-400" 

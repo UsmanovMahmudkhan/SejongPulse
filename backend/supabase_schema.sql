@@ -7,6 +7,7 @@ CREATE TABLE profiles (
   gpa NUMERIC(3,2),
   skills TEXT[],
   current_building TEXT,
+  avatar_url TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -19,7 +20,8 @@ CREATE TABLE pulses (
   building_tag TEXT,
   likes_count INTEGER DEFAULT 0,
   comments_count INTEGER DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  deleted_at TIMESTAMPTZ
 );
 
 -- 3. Comments Table
